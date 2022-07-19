@@ -108,6 +108,7 @@ jobs:
     docker:
       - image: amazon/aws-cli
     steps:
+      - checkout
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -116,6 +117,8 @@ jobs:
               --tags project=udapeople \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+
+      - checkout
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -124,6 +127,8 @@ jobs:
               --tags project=udapeople \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7}"
+      
+      - checkout
       - run:
           name: Add back-end ip to ansible inventory
           command: |
