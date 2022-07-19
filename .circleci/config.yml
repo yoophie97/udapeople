@@ -7,7 +7,7 @@ commands:
       # Add parameter here
     steps:
       - run:
-          name: Destroy environments
+          name: Destroy environments098
           when: on_fail
           command: |
             # Your code here
