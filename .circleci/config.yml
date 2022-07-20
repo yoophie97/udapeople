@@ -215,7 +215,7 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            aws cloudformation list-exports --query "Exports[?Name=='backend-d465d5b-PublicIP'].Value" --no-paginate --output text
+            BACKEND_IP=$(curl aws cloudformation list-exports --query "Exports[?Name=='backend-d465d5b-PublicIP'].Value" --no-paginate --output text)
             echo "BACKEND_IP = ${BACKEND_IP}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
@@ -253,4 +253,4 @@ workflows:
       # - run-migrations:
       #     requires: [configure-infrastructure]
       - deploy-frontend
-          # requires: [run-migrations]
+        # requires: [run-migrations]
