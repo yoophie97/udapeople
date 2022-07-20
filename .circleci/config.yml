@@ -132,9 +132,10 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
+            yum install -y tar gzip
             aws cloudformation \
             list-exports --query "Exports[?Name==\`backend-${CIRCLE_WORKFLOW_ID}-PublicIP\`].Value" \
-            --no-paginate --output text > ~/project/.circleci/ansible/inventory.txt
+            --no-paginate --output text >> ~/project/.circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
@@ -158,7 +159,7 @@ jobs:
           name: Configure server
           command: |
             cd .circleci/ansible ansible-playbook -i inventory.txt configure-server.yml
-      # Here's where you will add some code to rollback on failure
+      - destroy_environment
 
 workflows:
   default:
