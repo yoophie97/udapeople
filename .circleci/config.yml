@@ -215,9 +215,11 @@ jobs:
       - run:
           name: Get backend url
           command: |
+            BAD_ID=backend-${CIRCLE_WORKFLOW_ID}-PublicIP
+            echo $BAD_ID
             BACKEND_IP=$(aws cloudformation \
-            list-exports --query "Exports[?Name==\`backend-${CIRCLE_WORKFLOW_ID}-PublicIP\`].Value" \
-            --no-paginate --output text)
+              list-exports --query "Exports[?Name=='$BAD_ID'].Value" \
+              --no-paginate --output text)
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
       - run:
