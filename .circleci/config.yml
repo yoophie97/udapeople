@@ -210,8 +210,8 @@ jobs:
           name: Install dependencies
           command: |
             yum install -y tar gzip
-            sudo apt update
-            sudo apt install nodejs npm
+            apt update
+            apt install nodejs npm
       - run:
           name: Get backend url
           command: |
