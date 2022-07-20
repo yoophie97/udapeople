@@ -221,5 +221,5 @@ workflows:
               only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - run-migration:
+      - run-migrations:
           requires: [configure-infrastructure]
