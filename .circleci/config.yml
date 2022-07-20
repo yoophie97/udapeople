@@ -22,12 +22,12 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            SUCCESS=${curl https://kvdb.io/6KN83E1BmhhKPaL2JoZgip/migration_${CIRCLE_WORKFLOW_ID:0:7}}
+            SUCCESS=$(curl https://kvdb.io/6KN83E1BmhhKPaL2JoZgip/migration_${CIRCLE_WORKFLOW_ID:0:7})
             if(( $SUCCESS==1 )); 
             then
             cd ~/project/backend
             npm install
-            npm run migrate:undo
+            npm run migrations:revert
             fi
 
 jobs:
@@ -200,6 +200,7 @@ jobs:
                 curl https://kvdb.io/6KN83E1BmhhKPaL2JoZgip/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - revert-migrations
+      - destroy_environment
 
 workflows:
   default:
