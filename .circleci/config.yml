@@ -243,10 +243,14 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible tar gzip curl nodejs npm openssh-client git
-            curl -sL https://rpm.nodesource.com/setup_14.x | bash -
-            yum install -y nodejs
-            yum install -y tar gzip
+            apk add --update ansible
+            apk add --update ansible tar gzip
+            apk add --update curl 
+            apk add --update nodejs npm
+            apk add --update openssh-client
+            # curl -sL https://rpm.nodesource.com/setup_14.x | bash -
+            # yum install -y nodejs
+            # yum install -y tar gzip
       - run:
           name: Deploy backend
           command: |
