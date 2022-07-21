@@ -150,9 +150,10 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
             yum install -y tar gzip
-            aws cloudformation \
-            list-exports --query "Exports[?Name==\`backend-${CIRCLE_WORKFLOW_ID}-PublicIP\`].Value" \
-            --no-paginate --output text >> ~/project/.circleci/ansible/inventory.txt
+            # aws cloudformation \
+            # list-exports --query "Exports[?Name==\`backend-${CIRCLE_WORKFLOW_ID}-PublicIP\`].Value" \
+            # --no-paginate --output text >> ~/project/.circleci/ansible/inventory.txt
+            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text >> >> ~/project/.circleci/ansible/inventory.txt
             cat ~/project/.circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
@@ -262,7 +263,7 @@ jobs:
             tar -C backend -czvf artifact.tar.gz .
             mkdir .circleci/ansible/roles/deploy/files/
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files/
-            ls -lh
+            ls .circleci/ansible/roles/deploy/files/
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
@@ -284,10 +285,10 @@ workflows:
       # - scan-frontend:
       #     requires: [build-frontend]
       - deploy-infrastructure
-          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          # filters:
-          #   branches:
-          #     only: [master]
+      # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      # filters:
+      #   branches:
+      #     only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       # - run-migrations:
