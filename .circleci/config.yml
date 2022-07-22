@@ -249,7 +249,7 @@ jobs:
             apk add --update curl 
             apk add --update nodejs npm
             apk add --update openssh-client
-            apt-get install awscli
+            pip install awscli
             # curl -sL https://rpm.nodesource.com/setup_14.x | bash -
             # yum install -y nodejs
             # yum install -y tar gzip
