@@ -11,18 +11,18 @@
     production: yes
     state: present
 
-- name: "Stop pm2"
-  become: true
-  pm2:
-    name: stop default
-    global: yes
-    production: yes
-    state: present
+# - name: "Stop pm2"
+#   become: true
+#   pm2:
+#     name: stop default
+#     global: yes
+#     production: yes
+#     state: present
 
-- name: "Start pm2 service"
-  become: true
-  pm2:
-    name: start npm -- start
-    global: yes
-    production: yes
-    state: present
+# - name: "Start pm2 service"
+#   become: true
+#   pm2:
+#     name: start npm -- start
+#     global: yes
+#     production: yes
+#     state: present
