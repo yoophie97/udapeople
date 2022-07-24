@@ -27,6 +27,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
+            echo "Destroying environment: << parameters.workflow_id >> "
             SUCCESS=$(curl https://kvdb.io/6KN83E1BmhhKPaL2JoZgip/migration_${CIRCLE_WORKFLOW_ID:0:7} --insecure)
             if(( $SUCCESS==1 )); 
             then
@@ -34,6 +35,30 @@ commands:
               npm install
               npm run migrations:revert
             fi
+
+  rollback-cloudfront:
+    description: Revert the last cloudfront
+    parameters:
+      workflow_id:
+        type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Revert cloudfront
+          when: on_fail
+          command: |
+            echo "Destroying environment: << parameters.workflow_id >> "
+            WorkflowID=$(cat ~/OldWorkflowID.txt)
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo WorkflowID: "${WorkflowID}"
+
+            aws cloudformation deploy \
+            --template-file .circleci/files/cloudfront.yml \
+            --stack-name udapeople-frontend-${OldWorkflowID} \
+            --parameter-overrides WorkflowID="${WorkflowID}" \
+            --tags project=udapeople
 
 jobs:
   build-frontend:
@@ -235,12 +260,8 @@ jobs:
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-      # - destroy_environment:
-      #     parameters:
-      #       workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      # - revert-migrations:
-      #     parameters:
-      #       workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations
+      - destroy_environment
 
   deploy-backend:
     docker:
@@ -314,6 +335,34 @@ jobs:
       - revert-migrations
       - destroy_environment
 
+  cloudfront-update:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            export OldWorkflowID=$(aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text)
+            echo $OldWorkflowID >> ~/OldWorkflowID.txt
+            cat ~/OldWorkflowID.txt
+
+            aws cloudformation deploy \
+            --template-file .circleci/files/cloudfront.yml \
+            --stack-name InitialStack \
+            --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --tags project=udapeople
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo current Workflow Id: ${CIRCLE_WORKFLOW_ID:0:7}
+
+      - rollback-cloudfront
+
 workflows:
   default:
     jobs:
@@ -342,3 +391,5 @@ workflows:
           requires: [configure-infrastructure]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
