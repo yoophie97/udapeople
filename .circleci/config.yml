@@ -239,7 +239,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["f2:8d:32:51:99:05:9b:69:10:a7:f3:c8:c8:96:6d:82"]
+          fingerprints: ["18:12:58:df:60:cf:65:9e:19:bc:40:1b:51:bd:21:a4"]
       - attach_workspace:
           at: ~/
       - run:
@@ -270,8 +270,8 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      # - revert-migrations
-      # - destroy_environment
+      - revert-migrations
+      - destroy_environment
 
 workflows:
   default:
