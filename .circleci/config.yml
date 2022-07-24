@@ -276,7 +276,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update curl 
+            apk add --update curl
+            pip install awscli
             # apk add --update openssh-client
       - run:
           name: Get backend url
@@ -329,8 +330,8 @@ workflows:
           requires: [deploy-infrastructure]
       # - run-migrations:
       #     requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
+      - deploy-frontend:
+          requires: [run-migrations]
       - deploy-backend:
           requires: [configure-infrastructure]
       - smoke-test:
