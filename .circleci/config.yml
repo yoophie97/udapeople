@@ -16,7 +16,7 @@ commands:
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
             BUCKET_NAME=udapeople-${CIRCLE_WORKFLOW_ID:0:7}
             echo BUCKET_NAME: "${BUCKET_NAME}"
-            aws s3 rm s3://${BUCKET_NAME} --recursive
+            # aws s3 rm s3://${BUCKET_NAME} --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
 
   revert-migrations:
@@ -388,8 +388,8 @@ workflows:
           requires: [deploy-infrastructure]
       # - run-migrations:
       #     requires: [configure-infrastructure]
-      - deploy-frontend
-        # requires: [run-migrations]
+      - deploy-frontend:
+          requires: [configure-infrastructure]
       - deploy-backend:
           requires: [configure-infrastructure]
       - smoke-test:
