@@ -1,2 +1,5 @@
-https://github.com/norb-c/udapeople
+Public Url to GitHub repository (not private) [https://github.com/norb-c/udapeople]
 Provide the public URL for your S3 Bucket (aka, your front-end). [URL02]
+Public URL for your CloudFront distribution (aka, your blue production front-end) [https://dysjxui8501j0.cloudfront.net]
+Public URLs to deployed application back-end in EC2 [URL04]
+Public URL to your Prometheus Server [URL05]
