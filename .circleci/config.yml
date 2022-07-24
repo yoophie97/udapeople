@@ -14,6 +14,9 @@ commands:
           command: |
             echo "Destroying environment: << parameters.workflow_id >> "
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+            BUCKET_NAME=udapeople-${CIRCLE_WORKFLOW_ID:0:7}
+            echo BUCKET_NAME: "${BUCKET_NAME}"
+            aws s3 rm s3://${BUCKET_NAME} --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
 
   revert-migrations:
@@ -56,7 +59,7 @@ commands:
 
             aws cloudformation deploy \
             --template-file .circleci/files/cloudfront.yml \
-            --stack-name udapeople-frontend-${OldWorkflowID} \
+            --stack-name udapeople-frontend-${WorkflowID} \
             --parameter-overrides WorkflowID="${WorkflowID}" \
             --tags project=udapeople
 
@@ -343,7 +346,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # your code here
+            apk add --update tar
       - run:
           name: Update cloudfront distribution
           command: |
@@ -383,10 +386,10 @@ workflows:
       #     only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      - deploy-frontend
+        # requires: [run-migrations]
       - deploy-backend:
           requires: [configure-infrastructure]
       - smoke-test:
