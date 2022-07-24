@@ -280,14 +280,11 @@ jobs:
             pip install awscli
             # apk add --update openssh-client
       - run:
-          name: Get backend url
+          name: Backend smoke test.
           command: |
             export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
-      - run:
-          name: Backend smoke test.
-          command: |
             if curl "${API_URL}/api/status" | grep "ok"
             then
                 return 0
