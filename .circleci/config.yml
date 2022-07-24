@@ -340,13 +340,14 @@ jobs:
 
   cloudfront-update:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.10.5-alpine3.16
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
             apk add --update tar
+            pip install awscli
       - run:
           name: Update cloudfront distribution
           command: |
