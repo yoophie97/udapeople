@@ -384,10 +384,9 @@ jobs:
       - run:
           name: Get old stack workflow id
           command: |
-            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-            --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+            # export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
 
-            echo Stack names: "${STACKS[@]}"
+            # echo Stack names: "${STACKS[@]}"
             export STACKS=[$STACKS]
       - run:
           name: Remove old stacks and files
@@ -403,33 +402,53 @@ jobs:
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
             fi
 
+  configure-prometheus:
+    docker:
+      - image: python:3.10.5-alpine3.16
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update tar
+            pip install awscli
+      - run:
+          name: configure prometheus
+          command: |
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt configure-prometheus-node-exporter.yml
+      - revert-migrations
+      - destroy_environment
+
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-          filters:
-            branches:
-              only: [master, test-feature-branch]
-      - test-backend:
-          requires: [build-backend]
-          filters:
-            branches:
-              only: [master, test-feature-branch]
-      - scan-backend:
-          requires: [build-backend]
-          filters:
-            branches:
-              only: [master, test-feature-branch]
-      - scan-frontend:
-          requires: [build-frontend]
-          filters:
-            branches:
-              only: [master, test-feature-branch]
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires: [build-frontend]
+      #     filters:
+      #       branches:
+      #         only: [master, test-feature-branch]
+      # - test-backend:
+      #     requires: [build-backend]
+      #     filters:
+      #       branches:
+      #         only: [master, test-feature-branch]
+      # - scan-backend:
+      #     requires: [build-backend]
+      #     filters:
+      #       branches:
+      #         only: [master, test-feature-branch]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      #     filters:
+      #       branches:
+      #         only: [master, test-feature-branch]
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [master]
@@ -438,33 +457,38 @@ workflows:
           filters:
             branches:
               only: [master]
-      - run-migrations:
+      - configure-prometheus:
           requires: [configure-infrastructure]
           filters:
             branches:
               only: [master]
-      - deploy-frontend:
-          requires: [run-migrations]
-          filters:
-            branches:
-              only: [master]
-      - deploy-backend:
-          requires: [run-migrations]
-          filters:
-            branches:
-              only: [master]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
-          filters:
-            branches:
-              only: [master]
-      - cloudfront-update:
-          requires: [smoke-test]
-          filters:
-            branches:
-              only: [master]
-      - cleanup:
-          requires: [cloudfront-update]
-          filters:
-            branches:
-              only: [master]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      #     filters:
+      #       branches:
+      #         only: [master]
+      # - deploy-frontend:
+      #     requires: [run-migrations]
+      #     filters:
+      #       branches:
+      #         only: [master]
+      # - deploy-backend:
+      #     requires: [run-migrations]
+      #     filters:
+      #       branches:
+      #         only: [master]
+      # - smoke-test:
+      #     requires: [deploy-backend, deploy-frontend]
+      #     filters:
+      #       branches:
+      #         only: [master]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
+      #     filters:
+      #       branches:
+      #         only: [master]
+      # - cleanup:
+      #     requires: [cloudfront-update]
+      #     filters:
+      #       branches:
+      #         only: [master]

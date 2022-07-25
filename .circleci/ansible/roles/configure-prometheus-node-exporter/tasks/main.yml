@@ -10,13 +10,19 @@
     src: /tmp/node_exporter-0.17.0.linux-amd64/node_exporter
     dest: /usr/local/bin/node_exporter
     remote_src: yes
-    mode: '0777'
-    
+    mode: "0777"
+
+# - name: "add node exporter configuration."
+#   become: true
+#   copy:
+#     src: node_exporter.service
+#     dest: /etc/systemd/system/
+
 - name: "add node exporter configuration."
   become: true
-  copy:
-    src: node_exporter.service
-    dest: /etc/systemd/system/
+  template:
+    src: "files/node_exporter.service"
+    dest: "/etc/systemd/system/node_exporter.service"
 
 - name: "enable node_exporter service"
   become: true
