@@ -42,3 +42,8 @@ Outputs:
     Value: !GetAtt EC2Instance.PublicIp
     Export:
       Name: !Sub "backend-${ID}-PublicIP"
+  WorkflowID:
+    Value: !Sub ${ID}
+    Description: workflow id
+    Export:
+      Name: MyWorkflowID
