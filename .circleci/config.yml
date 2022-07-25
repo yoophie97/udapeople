@@ -420,7 +420,6 @@ jobs:
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-prometheus-node-exporter.yml
-      - revert-migrations
       - destroy_environment
 
 workflows:
