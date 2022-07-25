@@ -384,11 +384,11 @@ jobs:
       - run:
           name: Get old stack workflow id
           command: |
-            # export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-            # --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+            --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
 
-            # echo Stack names: "${STACKS[@]}"
-            # export STACKS=[$STACKS]
+            echo Stack names: "${STACKS[@]}"
+            export STACKS=[$STACKS]
       - run:
           name: Remove old stacks and files
           command: |
@@ -406,21 +406,30 @@ jobs:
 workflows:
   default:
     jobs:
-      # - build-frontend
-      # - build-backend
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      - deploy-infrastructure
-      # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      # filters:
-      #   branches:
-      #     only: [master]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+          filters:
+            branches:
+              only: [master, test-feature-branch]
+      - test-backend:
+          requires: [build-backend]
+          filters:
+            branches:
+              only: [master, test-feature-branch]
+      - scan-backend:
+          requires: [build-backend]
+          filters:
+            branches:
+              only: [master, test-feature-branch]
+      - scan-frontend:
+          requires: [build-frontend]
+          filters:
+            branches:
+              only: [master, test-feature-branch]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
