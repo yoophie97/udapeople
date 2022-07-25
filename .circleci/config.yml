@@ -384,12 +384,11 @@ jobs:
       - run:
           name: Get old stack workflow id
           command: |
-            # Fetch the stack names          
-            export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-            --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
-            echo Stack names: "${STACKS[@]}"
+            # export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+            # --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
 
-            export STACKS=[$STACKS]
+            # echo Stack names: "${STACKS[@]}"
+            # export STACKS=[$STACKS]
       - run:
           name: Remove old stacks and files
           command: |
