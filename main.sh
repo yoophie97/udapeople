@@ -1,6 +1,3 @@
-#!/bin/sh -eo pipefail
-export STACKS=$(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-  --stack-status-filter CREATE_COMPLETE --no-paginate --output text)
-
-echo Stack names: "${STACKS[@]}"
-export STACKS=[$STACKS]
+export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text)
+export API_URL=http://${BACKEND_IP}:3030
+echo API_URL=${API_URL} >> frontend/.env
