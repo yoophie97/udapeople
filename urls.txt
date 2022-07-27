@@ -1,5 +1,5 @@
 URL01 => https://github.com/norb-c/udapeople
-URL02 => http://udapeople-23adc0a.s3-website-us-east-1.amazonaws.com
+URL02 => http://udapeople-c2cf870.s3-website-us-east-1.amazonaws.com
 URL03 => https://dysjxui8501j0.cloudfront.net
-URL04 => ec2-54-161-134-59.compute-1.amazonaws.com
+URL04 => ec2-54-209-95-46.compute-1.amazonaws.com
 URL05 Prom => ec2-34-224-41-126.compute-1.amazonaws.com
